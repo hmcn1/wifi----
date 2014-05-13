@@ -12,6 +12,11 @@ Begin VB.Form Form1
    ScaleHeight     =   4530
    ScaleWidth      =   5490
    StartUpPosition =   2  '屏幕中心
+   Begin VB.Timer Timer1 
+      Interval        =   100
+      Left            =   480
+      Top             =   3600
+   End
    Begin VB.CommandButton Command5 
       Caption         =   "查看已连接设备"
       BeginProperty Font 
@@ -32,7 +37,7 @@ Begin VB.Form Form1
    Begin VB.TextBox Text1 
       Height          =   270
       Left            =   120
-      TabIndex        =   11
+      TabIndex        =   10
       Top             =   2280
       Width           =   375
    End
@@ -49,7 +54,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   480
-      TabIndex        =   12
+      TabIndex        =   11
       Top             =   3000
       Width           =   855
    End
@@ -66,7 +71,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   1080
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   3720
       Width           =   1215
    End
@@ -83,21 +88,21 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   2040
-      TabIndex        =   9
+      TabIndex        =   8
       Top             =   3000
       Width           =   855
    End
    Begin VB.TextBox Text2 
       Height          =   270
       Left            =   1920
-      TabIndex        =   7
+      TabIndex        =   6
       Top             =   2280
       Width           =   375
    End
    Begin VB.TextBox Text3 
       Height          =   270
       Left            =   2400
-      TabIndex        =   8
+      TabIndex        =   7
       Top             =   2280
       Width           =   375
    End
@@ -186,13 +191,21 @@ Begin VB.Form Form1
       Top             =   1320
       Width           =   1215
    End
+   Begin VB.Label Label8 
+      Caption         =   "请以管理员身份运行程序！本程序仅适用于Win8"
+      Height          =   255
+      Left            =   0
+      TabIndex        =   19
+      Top             =   120
+      Width           =   4095
+   End
    Begin VB.Label Label7 
       BackColor       =   &H80000004&
       Caption         =   "--------Copyright By Wesley.H--------"
       ForeColor       =   &H80000011&
       Height          =   255
       Left            =   3120
-      TabIndex        =   19
+      TabIndex        =   18
       Top             =   4320
       Width           =   3375
    End
@@ -215,7 +228,7 @@ Begin VB.Form Form1
       ForeColor       =   &H80000011&
       Height          =   255
       Left            =   3840
-      TabIndex        =   18
+      TabIndex        =   17
       Top             =   600
       Width           =   735
    End
@@ -278,7 +291,7 @@ Begin VB.Form Form1
       Height          =   255
       Index           =   1
       Left            =   480
-      TabIndex        =   17
+      TabIndex        =   16
       Top             =   2280
       Width           =   1095
    End
@@ -295,7 +308,7 @@ Begin VB.Form Form1
       Height          =   255
       Index           =   1
       Left            =   2040
-      TabIndex        =   16
+      TabIndex        =   15
       Top             =   1680
       Width           =   975
    End
@@ -304,7 +317,7 @@ Begin VB.Form Form1
       ForeColor       =   &H80000011&
       Height          =   255
       Left            =   480
-      TabIndex        =   15
+      TabIndex        =   14
       Top             =   1680
       Width           =   975
    End
@@ -312,7 +325,7 @@ Begin VB.Form Form1
       Caption         =   "："
       Height          =   255
       Left            =   2280
-      TabIndex        =   14
+      TabIndex        =   13
       Top             =   2280
       Width           =   135
    End
@@ -329,28 +342,9 @@ Begin VB.Form Form1
       EndProperty
       Height          =   255
       Left            =   2760
-      TabIndex        =   13
+      TabIndex        =   12
       Top             =   2280
       Width           =   495
-   End
-   Begin VB.Label Label1 
-      Caption         =   "请以管理员身份运行程序！本程序仅适用于Win8"
-      BeginProperty Font 
-         Name            =   "宋体"
-         Size            =   7.5
-         Charset         =   134
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H80000013&
-      Height          =   255
-      Index           =   0
-      Left            =   120
-      TabIndex        =   6
-      Top             =   120
-      Width           =   3255
    End
 End
 Attribute VB_Name = "Form1"
@@ -359,12 +353,14 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+Dim flag As Boolean
 Private Sub Form_Load()
 Unload Form2
 If App.PrevInstance Then
     MsgBox "你已经打开这个程序了！"
 End
 End If
+flag = True
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
@@ -373,19 +369,19 @@ End
 End Sub
 
 Private Sub Command1_Click()
-Shell "cmd.exe /k arp -a -N 192.168.137.1 >C:\Windows\temp.txt", vbHide
+Shell "cmd.exe /k arp -a -N 192.168.137.1 >C:\Windows\temp3.txt", vbHide
 Dim times As Single
 times = Timer + 0.2
 Do
     DoEvents
 Loop While times > Timer
-If FileLen("C:\Windows\temp.txt") <> 0 Then
+If FileLen("C:\Windows\temp3.txt") <> 0 Then
     MsgBox "您的热点已打开，无需重复打开", , "错误！"
 Else
     Shell "cmd.exe /k netsh wlan start hostednetwork", vbHide
 End If
 Shell "cmd.exe /k ipconfig /renew", vbHide
-Kill "C:\Windows\temp.txt"
+Kill "C:\Windows\temp3.txt"
 End Sub
 
 Private Sub Command2_Click()
@@ -566,3 +562,13 @@ Sub Text3_keyPress(KeyAscii As Integer)
            Command9_Click
          End If
     End Sub
+
+Private Sub Timer1_Timer()
+If flag = True Then
+    Label8.Left = Label8.Left + 50
+        If Label8.Left > Me.Width - Label8.Width Then flag = False
+Else
+    Label8.Left = Label8.Left - 50
+        If Label8.Left < 0 Then flag = True
+End If
+End Sub
