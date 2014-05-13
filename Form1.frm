@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin VB.Form Form1 
    BorderStyle     =   1  'Fixed Single
-   Caption         =   "Wifi热点工具v2.0beta"
+   Caption         =   "Wifi热点工具V2.0正式版"
    ClientHeight    =   4530
    ClientLeft      =   8700
    ClientTop       =   3840
@@ -373,8 +373,19 @@ End
 End Sub
 
 Private Sub Command1_Click()
-Shell "cmd.exe /k netsh wlan start hostednetwork", vbHide
+Shell "cmd.exe /k arp -a -N 192.168.137.1 >C:\Windows\temp.txt", vbHide
+Dim times As Single
+times = Timer + 0.2
+Do
+    DoEvents
+Loop While times > Timer
+If FileLen("C:\Windows\temp.txt") <> 0 Then
+    MsgBox "您的热点已打开，无需重复打开", , "错误！"
+Else
+    Shell "cmd.exe /k netsh wlan start hostednetwork", vbHide
+End If
 Shell "cmd.exe /k ipconfig /renew", vbHide
+Kill "C:\Windows\temp.txt"
 End Sub
 
 Private Sub Command2_Click()
@@ -395,6 +406,7 @@ End Sub
 
 Private Sub Command5_Click()
 Shell "cmd.exe /k arp -a -N 192.168.137.1 >C:\Windows\temp.txt", vbHide
+Shell "cmd.exe /k netsh wlan show hostednetwork >C:\Windows\temp2.txt", vbHide
 Head = "                  IP地址                        MAC地址"
 Dim times As Single
 times = Timer + 0.2
@@ -404,23 +416,38 @@ Loop While times > Timer
 If FileLen("C:\Windows\temp.txt") = 0 Then
     MsgBox "热点未打开或IP地址未设置为192.168.137.1！", , "错误！"
 Else
-    Dim Str(1 To 15) As String
+    Dim Str(1 To 50), Sw(1 To 50) As String
     Dim Si1() As String
-    Dim Si As String
+    Dim Si2() As String
+    Dim Si3() As String
+    Dim Si, Sx As String
     Str(1) = "空"
-    Open "C:\Windows\temp.txt" For Input As #1
+    Open "C:\Windows\temp2.txt" For Input As #1
+    Open "C:\Windows\temp.txt" For Input As #2
     i = 1
     Do Until EOF(1)
-        Line Input #1, Si
-        If Right(Si, 10) = "动态        " Then
-            Si1 = Split(Si, "     ", 3)
-            Si1(1) = UCase(Si1(1))
-            Si1(0) = "设备" & i & "：" & Si1(0)
-            Str(i) = Si1(0) & "       " & Si1(1)
+        Line Input #1, Sx
+        If Right(Sx, 7) = "已经过身份验证" Then
+            Si1 = Split(Sx, "        ", 3)
+            Si3 = Split(Si1(1), ":", 6)
+            Sw(i) = Si3(0) & "-" & Si3(1) & "-" & Si3(2) & "-" & Si3(3) & "-" & Si3(4) & "-" & Si3(5)
             i = i + 1
         End If
     Loop
+    i = 1
+    Do Until EOF(2)
+        Line Input #2, Si
+        If Right(Si, 32) = "" & Sw(i) & "     动态        " Then
+            Si2 = Split(Si, "     ", 3)
+            Si2(1) = UCase(Si2(1))
+            Si2(0) = "设备" & i & "：" & Si2(0)
+            Str(i) = Si2(0) & "       " & Si2(1)
+            i = i + 1
+            Seek #2, 1
+        End If
+    Loop
     Close #1
+    Close #2
     If Str(1) = "空" Then
         MsgBox "暂无已连接设备！", , "已连接设备"
     Else
@@ -431,6 +458,7 @@ Else
     End If
 End If
 Kill "C:\Windows\temp.txt"
+Kill "C:\Windows\temp2.txt"
 End Sub
 
 Private Sub Command6_Click()
