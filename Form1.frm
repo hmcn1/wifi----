@@ -12,10 +12,17 @@ Begin VB.Form Form1
    ScaleHeight     =   4530
    ScaleWidth      =   5490
    StartUpPosition =   2  '屏幕中心
+   Begin VB.TextBox Text4 
+      Height          =   270
+      Left            =   -840
+      TabIndex        =   0
+      Top             =   -860
+      Width           =   255
+   End
    Begin VB.Timer Timer1 
       Interval        =   100
-      Left            =   480
-      Top             =   3600
+      Left            =   240
+      Top             =   3720
    End
    Begin VB.CommandButton Command5 
       Caption         =   "查看已连接设备"
@@ -30,14 +37,14 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   3600
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   2400
       Width           =   1695
    End
    Begin VB.TextBox Text1 
       Height          =   270
       Left            =   120
-      TabIndex        =   10
+      TabIndex        =   11
       Top             =   2280
       Width           =   375
    End
@@ -54,7 +61,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   480
-      TabIndex        =   11
+      TabIndex        =   12
       Top             =   3000
       Width           =   855
    End
@@ -71,7 +78,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   1080
-      TabIndex        =   9
+      TabIndex        =   10
       Top             =   3720
       Width           =   1215
    End
@@ -88,21 +95,21 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   2040
-      TabIndex        =   8
+      TabIndex        =   9
       Top             =   3000
       Width           =   855
    End
    Begin VB.TextBox Text2 
       Height          =   270
       Left            =   1920
-      TabIndex        =   6
+      TabIndex        =   7
       Top             =   2280
       Width           =   375
    End
    Begin VB.TextBox Text3 
       Height          =   270
       Left            =   2400
-      TabIndex        =   7
+      TabIndex        =   8
       Top             =   2280
       Width           =   375
    End
@@ -119,7 +126,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   375
       Left            =   3600
-      TabIndex        =   3
+      TabIndex        =   4
       Top             =   3000
       Width           =   1695
    End
@@ -136,7 +143,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   495
       Left            =   720
-      TabIndex        =   0
+      TabIndex        =   6
       Top             =   840
       Width           =   1935
    End
@@ -195,7 +202,7 @@ Begin VB.Form Form1
       Caption         =   "请以管理员身份运行程序！本程序仅适用于Win8"
       Height          =   255
       Left            =   0
-      TabIndex        =   19
+      TabIndex        =   20
       Top             =   120
       Width           =   4095
    End
@@ -205,7 +212,7 @@ Begin VB.Form Form1
       ForeColor       =   &H80000011&
       Height          =   255
       Left            =   3120
-      TabIndex        =   18
+      TabIndex        =   19
       Top             =   4320
       Width           =   3375
    End
@@ -228,7 +235,7 @@ Begin VB.Form Form1
       ForeColor       =   &H80000011&
       Height          =   255
       Left            =   3840
-      TabIndex        =   17
+      TabIndex        =   18
       Top             =   600
       Width           =   735
    End
@@ -255,22 +262,6 @@ Begin VB.Form Form1
    End
    Begin VB.Line Line1 
       BorderColor     =   &H80000010&
-      Index           =   2
-      X1              =   0
-      X2              =   240
-      Y1              =   0
-      Y2              =   0
-   End
-   Begin VB.Line Line1 
-      BorderColor     =   &H80000010&
-      Index           =   1
-      X1              =   0
-      X2              =   240
-      Y1              =   0
-      Y2              =   0
-   End
-   Begin VB.Line Line1 
-      BorderColor     =   &H80000010&
       Index           =   0
       X1              =   0
       X2              =   360
@@ -291,7 +282,7 @@ Begin VB.Form Form1
       Height          =   255
       Index           =   1
       Left            =   480
-      TabIndex        =   16
+      TabIndex        =   17
       Top             =   2280
       Width           =   1095
    End
@@ -308,7 +299,7 @@ Begin VB.Form Form1
       Height          =   255
       Index           =   1
       Left            =   2040
-      TabIndex        =   15
+      TabIndex        =   16
       Top             =   1680
       Width           =   975
    End
@@ -317,7 +308,7 @@ Begin VB.Form Form1
       ForeColor       =   &H80000011&
       Height          =   255
       Left            =   480
-      TabIndex        =   14
+      TabIndex        =   15
       Top             =   1680
       Width           =   975
    End
@@ -325,7 +316,7 @@ Begin VB.Form Form1
       Caption         =   "："
       Height          =   255
       Left            =   2280
-      TabIndex        =   13
+      TabIndex        =   14
       Top             =   2280
       Width           =   135
    End
@@ -342,7 +333,7 @@ Begin VB.Form Form1
       EndProperty
       Height          =   255
       Left            =   2760
-      TabIndex        =   12
+      TabIndex        =   13
       Top             =   2280
       Width           =   495
    End
@@ -352,7 +343,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 Dim flag As Boolean
 Private Sub Form_Load()
 Unload Form2
@@ -360,32 +350,41 @@ If App.PrevInstance Then
     MsgBox "你已经打开这个程序了！"
 End
 End If
+Open "C:\Windows\temp3.txt" For Output As #1
+Close #1
 flag = True
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 Unload Form2
+Kill "C:\Windows\temp3.txt"
 End
 End Sub
 
 Private Sub Command1_Click()
-Shell "cmd.exe /k arp -a -N 192.168.137.1 >C:\Windows\temp3.txt", vbHide
+Command1.Enabled = False
+Shell "cmd.exe /c arp -a -N 192.168.137.1 >C:\Windows\temp3.txt", vbHide
+Text4.SetFocus
 Dim times As Single
-times = Timer + 0.2
+times = Timer + 0.1
 Do
     DoEvents
 Loop While times > Timer
 If FileLen("C:\Windows\temp3.txt") <> 0 Then
     MsgBox "您的热点已打开，无需重复打开", , "错误！"
+    Text4.SetFocus
 Else
-    Shell "cmd.exe /k netsh wlan start hostednetwork", vbHide
+    Shell "cmd.exe /c netsh wlan start hostednetwork", vbHide
 End If
-Shell "cmd.exe /k ipconfig /renew", vbHide
-Kill "C:\Windows\temp3.txt"
+Shell "cmd.exe /c ipconfig /renew", vbHide
+Command1.Enabled = True
 End Sub
 
 Private Sub Command2_Click()
-Shell "cmd.exe /k netsh wlan stop hostednetwork", vbHide
+Command2.Enabled = False
+Text4.SetFocus
+Shell "cmd.exe /c netsh wlan stop hostednetwork", vbHide
+Command2.Enabled = True
 End Sub
 
 Private Sub Command3_Click()
@@ -396,13 +395,15 @@ Private Sub Command4_Click()
 If Len(Dir(App.Path & "\使用教程.txt")) = 0 Then
     A = MsgBox("教程文件已不存在！！如有需要请联系作者！", , "错误！")
 Else
-Shell "cmd.exe /c start " & App.Path & "\使用教程.txt", vbHide
+    Shell "cmd.exe /c start " & App.Path & "\使用教程.txt", vbHide
 End If
 End Sub
 
 Private Sub Command5_Click()
-Shell "cmd.exe /k arp -a -N 192.168.137.1 >C:\Windows\temp.txt", vbHide
-Shell "cmd.exe /k netsh wlan show hostednetwork >C:\Windows\temp2.txt", vbHide
+Shell "cmd.exe /c arp -a -N 192.168.137.1 >C:\Windows\temp.txt", vbHide
+Shell "cmd.exe /c netsh wlan show hostednetwork >C:\Windows\temp2.txt", vbHide
+Command5.Enabled = False
+Text4.SetFocus
 Head = "                  IP地址                        MAC地址"
 Dim times As Single
 times = Timer + 0.2
@@ -455,10 +456,11 @@ Else
 End If
 Kill "C:\Windows\temp.txt"
 Kill "C:\Windows\temp2.txt"
+Command5.Enabled = True
 End Sub
 
 Private Sub Command6_Click()
-Shell "cmd.exe /k ipconfig /renew", vbHide
+Shell "cmd.exe /c ipconfig /renew", vbHide
 End Sub
 
 Private Sub Command7_Click()
@@ -466,41 +468,36 @@ T = Text1.Text
 p = IsNumeric(T)
 If Len(T) = 0 Then
     A = MsgBox("请输入一个时间！", , "错误！")
-    Text1.Text = ""
 Else
     If p = 0 Then
         A = MsgBox("请输入数字！", , "错误！")
-        Text1.Text = ""
     Else
         If T = 0 Then
             A = MsgBox("时间为0则会立刻关机，请输入其他时间值！", , "错误！")
-            Text1.Text = ""
         Else
             If T <= 0 Then
                 A = MsgBox("请输入一个正数！", , "错误！")
-                Text1.Text = ""
             Else
                 T1 = T * 60
                 F = Fix(T)
-                Shell "cmd.exe /k shutdown -s -hybrid -t " & T1 & "", vbHide
+                Shell "cmd.exe /c shutdown -s -hybrid -t " & T1 & "", vbHide
                 A = MsgBox("        系统将在" & F & "分钟后关机" + vbCrLf + "若需重新设定关机时间请先取消定时关机!", , "设置定时关机成功！")
-                Text1.Text = ""
-                Text1.SetFocus
             End If
         End If
     End If
 End If
-
+Text1.Text = ""
+Text1.SetFocus
 End Sub
 
 Private Sub Command8_Click()
-Shell "cmd.exe /k shutdown -a", vbHide
-Shell "cmd.exe /k SCHTASKS /Delete /TN 定时关机 /f", vbHide
+Shell "cmd.exe /c shutdown -a", vbHide
 MsgBox ("取消关机成功")
 End Sub
 
 Private Sub Command9_Click()
 Dim Time As Long
+Dim WZ As String
 L = Text2.Text
 R = Text3.Text
 Z1 = IsNumeric(L)
@@ -515,7 +512,7 @@ Else
     Else
         If R < 0 Or R >= 60 Then
             A = MsgBox("请在右框内输入0到59之间整数！", , "错误！")
-            Text3.SetFocus
+            Text2.SetFocus
         Else
             L = Fix(L)
             R = Fix(R)
@@ -526,16 +523,19 @@ Else
             
             If L = H And R = m Then
                 A = MsgBox("输入当前时间则会立刻关机，请重新输入时间！", , "错误！")
+                Text2.SetFocus
             Else
                 If L > H Or (L = H And R > m) Then
-                    Time = 3600 * (L - H) + 60 * (R - m)
+                    WZ = "今"
                 Else
                     If L < H Or (L = H And R < m) Then
-                        Time = 3600 * (L - H + 24) + 60 * (R - m)
+                        H = H - 24
+                        WZ = "明"
                     End If
                 End If
-                A = MsgBox("系统将在明天" & L & "点" & R & "分" & S & "秒关机" + vbCrLf + "若需重新设定关机时间请先取消定时关机!", , "设置定时关机成功！")
-                Shell "cmd.exe /k shutdown -s -hybrid -t " & Time & "", vbHide
+                Time = 3600 * (L - H) + 60 * (R - m)
+                A = MsgBox("系统将在" & WZ & "天" & L & "点" & R & "分" & S & "秒关机" + vbCrLf + "若需重新设定关机时间请先取消定时关机!", , "设置定时关机成功！")
+                Shell "cmd.exe /c shutdown -s -hybrid -t " & Time & "", vbHide
             End If
         End If
     End If
@@ -545,30 +545,30 @@ End If
 End Sub
 
 Sub Text1_keyPress(KeyAscii As Integer)
-         If KeyAscii = 13 Then
-           KeyAscii = 0
-           Command7_Click
-         End If
-    End Sub
+If KeyAscii = 13 Then
+    KeyAscii = 0
+    Command7_Click
+End If
+End Sub
 Sub Text2_keyPress(KeyAscii As Integer)
-         If KeyAscii = 13 Then
-           KeyAscii = 0
-           Text3.SetFocus
-         End If
-    End Sub
+If KeyAscii = 13 Then
+    KeyAscii = 0
+    Text3.SetFocus
+End If
+End Sub
 Sub Text3_keyPress(KeyAscii As Integer)
-         If KeyAscii = 13 Then
-           KeyAscii = 0
-           Command9_Click
-         End If
-    End Sub
+If KeyAscii = 13 Then
+    KeyAscii = 0
+    Command9_Click
+End If
+End Sub
 
 Private Sub Timer1_Timer()
 If flag = True Then
     Label8.Left = Label8.Left + 50
-        If Label8.Left > Me.Width - Label8.Width Then flag = False
-Else
-    Label8.Left = Label8.Left - 50
-        If Label8.Left < 0 Then flag = True
+    If Label8.Left > Me.Width - Label8.Width Then flag = False
+    Else
+        Label8.Left = Label8.Left - 50
+    If Label8.Left < 0 Then flag = True
 End If
 End Sub
